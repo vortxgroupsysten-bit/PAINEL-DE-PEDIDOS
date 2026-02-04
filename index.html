@@ -3,234 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão - Restaurante</title>
+    <title>Gestão & Financeiro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-body: #121212;
-            --bg-panel: #1e1e1e;
-            --bg-sidebar: #181818;
-            --primary: #ff9f43; /* Laranja */
-            --success: #1dd1a1; /* Verde */
-            --danger: #ff6b6b;  /* Vermelho */
-            --info: #54a0ff;    /* Azul */
-            --text-main: #f1f1f1;
-            --text-dim: #a5a5a5;
-            --border: #333;
+            --bg-body: #121212; --bg-panel: #1e1e1e; --bg-sidebar: #181818;
+            --primary: #ff9f43; --success: #1dd1a1; --danger: #ff6b6b; --info: #54a0ff;
+            --text-main: #f1f1f1; --text-dim: #a5a5a5; --border: #333;
         }
-
         * { box-sizing: border-box; outline: none; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: 260px;
-            background: var(--bg-sidebar);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        .brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            padding: 15px 20px;
-            text-align: left;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.3s;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-weight: 500;
-        }
-
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
+        .brand { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+        .nav-btn { background: transparent; border: none; color: var(--text-dim); padding: 15px 20px; text-align: left; font-size: 1rem; cursor: pointer; border-radius: 8px; transition: 0.3s; margin-bottom: 10px; width: 100%; font-weight: 500; }
         .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        
-        .nav-btn.active {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(255, 159, 67, 0.3);
-        }
+        .nav-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 15px rgba(255, 159, 67, 0.3); }
 
-        /* --- CONTEÚDO PRINCIPAL --- */
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            background-color: var(--bg-body);
-        }
-
-        .header-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* --- VIEW: COZINHA (TICKETS) --- */
-        .kitchen-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .ticket-card {
-            background: var(--bg-panel);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.4s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        
-        .ticket-card::before {
-            content: ''; height: 6px; width: 100%; background: var(--primary);
-        }
-
-        .ticket-header {
-            padding: 15px 20px;
-            background: #252525;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-badge { font-size: 1.2rem; font-weight: 700; color: #fff; }
-        .time-badge { font-size: 0.85rem; color: var(--text-dim); }
-
-        .ticket-body { padding: 20px; flex: 1; }
-
-        .waiter-info {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .item-list { list-style: none; padding: 0; margin: 0; }
-        .item-list li {
-            padding: 8px 0;
-            border-bottom: 1px dashed #333;
-            font-size: 1rem;
-            display: flex;
-            gap: 10px;
-        }
-        .item-qty { font-weight: bold; color: var(--primary); width: 25px; }
-
-        .ticket-footer { padding: 15px 20px; background: #252525; border-top: 1px solid var(--border); }
-        
-        .btn-deliver {
-            width: 100%;
-            background: transparent;
-            border: 2px solid var(--success);
-            color: var(--success);
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-        }
-        .btn-deliver:hover { background: var(--success); color: white; }
-
-        /* --- VIEW: MESAS (CAIXA) --- */
-        .tables-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .table-card {
-            background: var(--bg-panel);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 180px;
-            transition: 0.3s;
-            position: relative;
-        }
-
-        .table-card:hover { transform: translateY(-5px); border-color: var(--info); }
-        
-        .table-number { font-size: 2rem; font-weight: 700; color: var(--text-main); }
-        .table-status { font-size: 0.9rem; color: var(--success); display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
-        .table-total { font-size: 1.5rem; font-weight: 600; color: var(--success); text-align: right; margin: 10px 0; }
-
-        .btn-view-bill {
-            background: var(--info); color: white; border: none; padding: 10px;
-            border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%;
-        }
-
-        /* --- MODAL --- */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            z-index: 100; justify-content: center; align-items: center;
-        }
-
-        .modal-content {
-            background: var(--bg-panel); width: 450px; border-radius: 15px; padding: 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideUp 0.3s ease;
-            border: 1px solid var(--border);
-        }
-
-        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;}
-        .modal-body { padding: 20px; max-height: 50vh; overflow-y: auto; }
-        .modal-footer { padding: 20px; background: #252525; border-radius: 0 0 15px 15px; border-top: 1px solid var(--border); }
-
-        .receipt-item { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 8px; }
-        .receipt-meta { font-size: 0.75rem; color: var(--text-dim); display: block; margin-top: 2px; }
-        
-        .btn-close-bill {
-            width: 100%; padding: 12px; background: var(--danger); color: white;
-            border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
-        }
-        .btn-back { background: transparent; border: none; color: var(--text-dim); cursor: pointer; }
-
+        /* Main */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .header-title { font-size: 1.8rem; font-weight: 600; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; display: flex; justify-content: space-between; }
         .hidden { display: none; }
-        .empty-state { text-align: center; padding: 50px; color: var(--text-dim); font-size: 1.1rem; border: 2px dashed #333; border-radius: 15px; margin-top: 20px;}
+        .empty-state { text-align: center; padding: 40px; border: 2px dashed #333; border-radius: 10px; color: var(--text-dim); }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* Grids e Cards */
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        
+        /* Estilos Específicos Financeiro */
+        .finance-card { display: flex; align-items: center; justify-content: space-between; border-left: 5px solid var(--success); }
+        .waiter-name { font-size: 1.2rem; font-weight: bold; }
+        .waiter-total { font-size: 1.5rem; color: var(--success); font-weight: 700; }
+        .sales-count { font-size: 0.8rem; color: var(--text-dim); }
+        .total-day-box { background: #252525; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; border: 1px solid var(--success); }
 
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--bg-panel); width: 450px; border-radius: 15px; border: 1px solid var(--border); overflow: hidden; }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 20px; max-height: 50vh; overflow-y: auto; }
+        .modal-footer { padding: 20px; background: #252525; }
+        .receipt-item { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 10px 0; }
+        .btn-action { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; }
+        .btn-pay { background: var(--success); }
+        .btn-pay:hover { filter: brightness(1.1); }
+        .btn-close { background: transparent; color: var(--text-dim); }
+
+        /* Estilos Cozinha/Mesas (Simplificado para caber) */
+        .ticket-card { background: var(--bg-panel); border-radius: 10px; border-top: 5px solid var(--primary); padding: 15px; margin-bottom: 15px; }
+        .btn-deliver { background: transparent; border: 1px solid var(--success); color: var(--success); width: 100%; padding: 8px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .btn-deliver:hover { background: var(--success); color: white; }
     </style>
 </head>
 <body>
@@ -239,168 +62,125 @@
         <div class="brand">🚀 SysRest</div>
         <button class="nav-btn active" id="btn-kitchen" onclick="navigate('kitchen')">👨‍🍳 Cozinha</button>
         <button class="nav-btn" id="btn-tables" onclick="navigate('tables')">💰 Mesas / Caixa</button>
+        <button class="nav-btn" id="btn-finance" onclick="navigate('finance')">💲 Financeiro</button>
     </nav>
 
     <main class="main-content">
-        
         <div id="view-kitchen">
-            <div class="header-title">
-                <span>Fila de Pedidos</span>
-                <span style="font-size: 0.9rem; color: var(--primary); font-weight: normal;">Atualização em tempo real</span>
-            </div>
-            <div id="kitchen-container" class="kitchen-grid">
-                </div>
+            <div class="header-title"><span>Fila de Pedidos</span></div>
+            <div id="kitchen-container" class="grid-layout"></div>
         </div>
 
         <div id="view-tables" class="hidden">
-            <div class="header-title">
-                <span>Gestão de Mesas</span>
-            </div>
-            <div id="tables-container" class="tables-grid">
-                </div>
+            <div class="header-title"><span>Contas Abertas</span></div>
+            <div id="tables-container" class="grid-layout"></div>
         </div>
 
+        <div id="view-finance" class="hidden">
+            <div class="header-title">
+                <span>Vendas do Dia (Por Garçom)</span>
+                <button onclick="clearHistory()" style="background:#333; border:none; color:white; padding:5px 10px; cursor:pointer; border-radius:4px; font-size:0.8rem;">Limpar Dia</button>
+            </div>
+            <div class="total-day-box">
+                <span style="display:block; color:var(--text-dim);">Faturamento Total Hoje</span>
+                <span style="font-size: 2.5rem; font-weight: bold; color: var(--success);" id="grand-total">R$ 0.00</span>
+            </div>
+            <div id="finance-container" class="grid-layout"></div>
+        </div>
     </main>
 
     <div id="modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 style="margin:0;">Detalhes da Conta</h3>
-                <button class="btn-back" onclick="closeModal()">✕</button>
+                <h3 style="margin:0">Fechar Conta</h3>
+                <button class="btn-close" onclick="closeModal()">✕</button>
             </div>
             <div class="modal-body" id="modal-list"></div>
             <div class="modal-footer">
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:1.2rem; font-weight:bold;">
-                    <span>Total</span>
-                    <span>R$ <span id="modal-total">0.00</span></span>
+                <div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:bold; margin-bottom:10px;">
+                    <span>Total:</span> <span id="modal-total">R$ 0.00</span>
                 </div>
-                <button class="btn-close-bill" onclick="payBill()">💸 Fechar Conta</button>
+                <button class="btn-action btn-pay" onclick="payBill()">💸 Confirmar Pagamento</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- NAVEGAÇÃO ---
+        // Navegação
         function navigate(page) {
-            document.getElementById('view-kitchen').classList.add('hidden');
-            document.getElementById('view-tables').classList.add('hidden');
-            document.getElementById('btn-kitchen').classList.remove('active');
-            document.getElementById('btn-tables').classList.remove('active');
-
+            ['kitchen', 'tables', 'finance'].forEach(p => {
+                document.getElementById(`view-${p}`).classList.add('hidden');
+                document.getElementById(`btn-${p}`).classList.remove('active');
+            });
             document.getElementById(`view-${page}`).classList.remove('hidden');
             document.getElementById(`btn-${page}`).classList.add('active');
-
+            
             if(page === 'kitchen') renderKitchen();
             if(page === 'tables') renderTables();
+            if(page === 'finance') renderFinance();
         }
 
-        // --- COZINHA ---
+        // --- LÓGICA COZINHA ---
         function renderKitchen() {
             const container = document.getElementById('kitchen-container');
             const orders = JSON.parse(localStorage.getItem('restaurantOrders')) || [];
+            container.innerHTML = orders.length ? '' : '<div class="empty-state">Sem pedidos pendentes.</div>';
             
-            container.innerHTML = '';
-
-            if (orders.length === 0) {
-                container.innerHTML = '<div class="empty-state">👨‍🍳 A cozinha está tranquila.<br>Nenhum pedido pendente.</div>';
-                return;
-            }
-
-            orders.forEach((order, index) => {
-                let itemsHtml = '';
-                order.items.forEach(i => {
-                    itemsHtml += `<li><span class="item-qty">${i.qty}x</span> ${i.name}</li>`;
-                });
-
+            orders.forEach((order, idx) => {
+                let itemsHtml = order.items.map(i => `<li>${i.qty}x ${i.name}</li>`).join('');
                 container.innerHTML += `
                     <div class="ticket-card">
-                        <div class="ticket-header">
-                            <span class="table-badge">Mesa ${order.table}</span>
-                            <span class="time-badge">${order.time}</span>
+                        <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:10px;">
+                            <span>Mesa ${order.table}</span> <small>${order.time}</small>
                         </div>
-                        <div class="ticket-body">
-                            <div class="waiter-info">👤 Garçom: ${order.waiter}</div>
-                            <ul class="item-list">${itemsHtml}</ul>
-                        </div>
-                        <div class="ticket-footer">
-                            <button class="btn-deliver" onclick="deliverOrder(${index})">✅ Marcar como Pronto</button>
-                        </div>
-                    </div>
-                `;
+                        <div style="background:#333; color:var(--primary); padding:2px 8px; border-radius:4px; font-size:0.8rem; display:inline-block; margin-bottom:10px;">Garçom: ${order.waiter}</div>
+                        <ul style="padding-left:20px; margin:0;">${itemsHtml}</ul>
+                        <button class="btn-deliver" onclick="deliverOrder(${idx})">✅ Pronto</button>
+                    </div>`;
             });
         }
 
-        // --- SISTEMA DE NOTIFICAÇÃO (Adicionado) ---
-        function notifyWaiter(waiterName, tableNum) {
-            const notifications = JSON.parse(localStorage.getItem('restaurantNotifications')) || [];
-            
-            notifications.push({
-                id: Date.now(),
-                waiter: waiterName,
-                table: tableNum,
-                msg: `Pedido da Mesa ${tableNum} pronto!`,
-                read: false
-            });
-
-            localStorage.setItem('restaurantNotifications', JSON.stringify(notifications));
-        }
-
-        function deliverOrder(index) {
+        function deliverOrder(idx) {
             let orders = JSON.parse(localStorage.getItem('restaurantOrders'));
-            let order = orders[index];
+            let order = orders[idx];
+            
+            // Notifica
+            let notifs = JSON.parse(localStorage.getItem('restaurantNotifications')) || [];
+            notifs.push({ id: Date.now(), msg: `Mesa ${order.table} pronto!`, waiter: order.waiter });
+            localStorage.setItem('restaurantNotifications', JSON.stringify(notifs));
 
-            // 1. Marca garçom em cada item
-            const itemsTagged = order.items.map(i => ({ ...i, waiter: order.waiter }));
-
-            // 2. Salva na conta da mesa
+            // Salva na mesa
             let tabs = JSON.parse(localStorage.getItem('restaurantTabs')) || {};
             if(!tabs[order.table]) tabs[order.table] = [];
+            const itemsTagged = order.items.map(i => ({...i, waiter: order.waiter}));
             tabs[order.table].push(...itemsTagged);
-
             localStorage.setItem('restaurantTabs', JSON.stringify(tabs));
 
-            // 3. ENVIA NOTIFICAÇÃO (Chama a função criada acima)
-            notifyWaiter(order.waiter, order.table);
-
-            // 4. Remove da cozinha
-            orders.splice(index, 1);
+            // Remove e atualiza
+            orders.splice(idx, 1);
             localStorage.setItem('restaurantOrders', JSON.stringify(orders));
-
             renderKitchen();
         }
 
-        // --- MESAS ---
+        // --- LÓGICA MESAS ---
         function renderTables() {
             const container = document.getElementById('tables-container');
             const tabs = JSON.parse(localStorage.getItem('restaurantTabs')) || {};
-            const tables = Object.keys(tabs).sort((a,b) => a - b);
+            const keys = Object.keys(tabs);
+            container.innerHTML = keys.length ? '' : '<div class="empty-state">Nenhuma conta aberta.</div>';
 
-            container.innerHTML = '';
-
-            if (tables.length === 0) {
-                container.innerHTML = '<div class="empty-state">💰 Todas as contas estão fechadas.</div>';
-                return;
-            }
-
-            tables.forEach(t => {
-                const total = tabs[t].reduce((acc, i) => acc + (i.price * i.qty), 0);
+            keys.forEach(t => {
+                let total = tabs[t].reduce((acc, i) => acc + (i.price * i.qty), 0);
                 container.innerHTML += `
-                    <div class="table-card">
-                        <div>
-                            <div class="table-status">🟢 Ocupada</div>
-                            <div class="table-number">Mesa ${t}</div>
-                            <div style="color:var(--text-dim); margin-top:5px;">${tabs[t].length} itens pedidos</div>
-                        </div>
-                        <div>
-                            <div class="table-total">R$ ${total.toFixed(2)}</div>
-                            <button class="btn-view-bill" onclick="openModal('${t}')">Ver Conta</button>
-                        </div>
-                    </div>
-                `;
+                    <div class="card">
+                        <h2 style="margin:0 0 10px 0;">Mesa ${t}</h2>
+                        <div style="color:var(--success); font-size:1.5rem; font-weight:bold;">R$ ${total.toFixed(2)}</div>
+                        <button class="btn-action btn-pay" style="background:var(--info);" onclick="openModal('${t}')">Ver Conta</button>
+                    </div>`;
             });
         }
 
-        // --- MODAL & PAGAMENTO ---
+        // --- LÓGICA FINANCEIRO & FECHAMENTO ---
         let activeTable = null;
 
         function openModal(table) {
@@ -408,50 +188,89 @@
             const tabs = JSON.parse(localStorage.getItem('restaurantTabs'));
             const items = tabs[table];
             const list = document.getElementById('modal-list');
-            
-            list.innerHTML = '';
-            let total = 0;
+            let total = 0; list.innerHTML = '';
 
             items.forEach(i => {
                 total += i.price * i.qty;
-                list.innerHTML += `
-                    <div class="receipt-item">
-                        <div>
-                            <div style="font-weight:600; color:#fff;">${i.qty}x ${i.name}</div>
-                            <span class="receipt-meta">Ped por: ${i.waiter || 'Sistema'}</span>
-                        </div>
-                        <div style="font-weight:bold;">R$ ${(i.price * i.qty).toFixed(2)}</div>
-                    </div>
-                `;
+                list.innerHTML += `<div class="receipt-item"><span>${i.qty}x ${i.name} <br><small style="color:gray">${i.waiter || 'Sistema'}</small></span> <span>R$ ${(i.price*i.qty).toFixed(2)}</span></div>`;
             });
-
-            document.getElementById('modal-total').innerText = total.toFixed(2);
+            document.getElementById('modal-total').innerText = `R$ ${total.toFixed(2)}`;
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
         function payBill() {
-            if(confirm(`Confirmar pagamento e fechar Mesa ${activeTable}?`)) {
-                let tabs = JSON.parse(localStorage.getItem('restaurantTabs'));
-                delete tabs[activeTable];
-                localStorage.setItem('restaurantTabs', JSON.stringify(tabs));
-                
-                closeModal();
-                renderTables();
+            if(!confirm("Confirmar pagamento?")) return;
+
+            // 1. Processar Histórico de Vendas
+            const tabs = JSON.parse(localStorage.getItem('restaurantTabs'));
+            const items = tabs[activeTable];
+            const history = JSON.parse(localStorage.getItem('restaurantSalesHistory')) || [];
+
+            // Adiciona cada item ao histórico
+            items.forEach(item => {
+                history.push({
+                    waiter: item.waiter || 'Outros',
+                    amount: item.price * item.qty,
+                    item: item.name,
+                    time: new Date().toLocaleTimeString()
+                });
+            });
+            localStorage.setItem('restaurantSalesHistory', JSON.stringify(history));
+
+            // 2. Apagar Mesa
+            delete tabs[activeTable];
+            localStorage.setItem('restaurantTabs', JSON.stringify(tabs));
+
+            closeModal();
+            navigate('tables'); // Recarrega tela
+            alert("Conta fechada e vendas registradas!");
+        }
+
+        function renderFinance() {
+            const container = document.getElementById('finance-container');
+            const history = JSON.parse(localStorage.getItem('restaurantSalesHistory')) || [];
+            
+            // Agrupar por garçom
+            const salesByWaiter = {};
+            let grandTotal = 0;
+
+            history.forEach(sale => {
+                if(!salesByWaiter[sale.waiter]) salesByWaiter[sale.waiter] = 0;
+                salesByWaiter[sale.waiter] += sale.amount;
+                grandTotal += sale.amount;
+            });
+
+            document.getElementById('grand-total').innerText = `R$ ${grandTotal.toFixed(2)}`;
+            container.innerHTML = Object.keys(salesByWaiter).length ? '' : '<div class="empty-state">Nenhuma venda registrada hoje.</div>';
+
+            // Ordenar quem vendeu mais
+            const sortedWaiters = Object.entries(salesByWaiter).sort((a,b) => b[1] - a[1]);
+
+            sortedWaiters.forEach(([waiter, total]) => {
+                container.innerHTML += `
+                    <div class="card finance-card">
+                        <div>
+                            <div class="waiter-name">${waiter}</div>
+                            <div class="sales-count">Vendas acumuladas</div>
+                        </div>
+                        <div class="waiter-total">R$ ${total.toFixed(2)}</div>
+                    </div>`;
+            });
+        }
+
+        function clearHistory() {
+            if(confirm("Deseja apagar o histórico de vendas de hoje?")) {
+                localStorage.removeItem('restaurantSalesHistory');
+                renderFinance();
             }
         }
 
-        // Atualização automática da cozinha (5 segundos)
         setInterval(() => {
-            if(!document.getElementById('view-kitchen').classList.contains('hidden')) {
-                renderKitchen();
-            }
+            if(!document.getElementById('view-kitchen').classList.contains('hidden')) renderKitchen();
         }, 5000);
-
-        // Inicializar
+        
         renderKitchen();
     </script>
 </body>
