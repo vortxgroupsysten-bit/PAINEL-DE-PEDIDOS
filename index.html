@@ -2,201 +2,479 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Gestão</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão - Restaurante</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #222; color: #fff; margin: 0; display: flex; height: 100vh; }
-        .sidebar { width: 220px; background: #151515; padding: 20px; border-right: 1px solid #333; }
-        .sidebar button { width: 100%; padding: 15px; margin-bottom: 10px; background: #333; color: #ccc; border: none; cursor: pointer; text-align: left; border-radius: 5px; font-size: 16px; }
-        .sidebar button.active { background: #ff6b6b; color: white; font-weight: bold; }
+        :root {
+            --bg-body: #121212;
+            --bg-panel: #1e1e1e;
+            --bg-sidebar: #181818;
+            --primary: #ff9f43; /* Laranja */
+            --success: #1dd1a1; /* Verde */
+            --danger: #ff6b6b;  /* Vermelho */
+            --info: #54a0ff;    /* Azul */
+            --text-main: #f1f1f1;
+            --text-dim: #a5a5a5;
+            --border: #333;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
         
-        .content { flex: 1; padding: 30px; overflow-y: auto; }
+        .nav-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 159, 67, 0.3);
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background-color: var(--bg-body);
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- VIEW: COZINHA (TICKETS) --- */
+        .kitchen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .ticket-card {
+            background: var(--bg-panel);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.4s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        /* Faixa de status no topo do ticket */
+        .ticket-card::before {
+            content: '';
+            height: 6px;
+            width: 100%;
+            background: var(--primary);
+        }
+
+        .ticket-header {
+            padding: 15px 20px;
+            background: #252525;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-badge {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .time-badge { font-size: 0.85rem; color: var(--text-dim); }
+
+        .ticket-body { padding: 20px; flex: 1; }
+
+        .waiter-info {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .item-list { list-style: none; padding: 0; margin: 0; }
+        .item-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #333;
+            font-size: 1rem;
+            display: flex;
+            gap: 10px;
+        }
+        .item-qty { font-weight: bold; color: var(--primary); width: 25px; }
+
+        .ticket-footer { padding: 15px 20px; background: #252525; border-top: 1px solid var(--border); }
+        
+        .btn-deliver {
+            width: 100%;
+            background: transparent;
+            border: 2px solid var(--success);
+            color: var(--success);
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .btn-deliver:hover { background: var(--success); color: white; }
+
+        /* --- VIEW: MESAS (CAIXA) --- */
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .table-card {
+            background: var(--bg-panel);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 180px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .table-card:hover { transform: translateY(-5px); border-color: var(--info); }
+        
+        .table-number { font-size: 2rem; font-weight: 700; color: var(--text-main); }
+        .table-status { font-size: 0.9rem; color: var(--success); display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
+        .table-total { font-size: 1.5rem; font-weight: 600; color: var(--success); text-align: right; margin: 10px 0; }
+
+        .btn-view-bill {
+            background: var(--info);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-panel);
+            width: 450px;
+            border-radius: 15px;
+            padding: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;}
+        .modal-body { padding: 20px; max-height: 50vh; overflow-y: auto; }
+        .modal-footer { padding: 20px; background: #252525; border-radius: 0 0 15px 15px; border-top: 1px solid var(--border); }
+
+        .receipt-item { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+        .receipt-meta { font-size: 0.75rem; color: var(--text-dim); display: block; margin-top: 2px; }
+        
+        .btn-close-bill {
+            width: 100%;
+            padding: 12px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-back { background: transparent; border: none; color: var(--text-dim); cursor: pointer; }
+
         .hidden { display: none; }
-        
-        /* Cozinha */
-        .orders-container { display: flex; flex-wrap: wrap; gap: 20px; }
-        .order-card { background: #fff; color: #000; width: 280px; padding: 15px; border-radius: 8px; border-top: 5px solid #ff6b6b; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .order-meta { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px dashed #ccc; padding-bottom: 5px; margin-bottom: 10px; }
-        .waiter-badge { background: #333; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; display: inline-block; margin-bottom: 10px; }
-        .btn-deliver { width: 100%; background: #28a745; color: white; padding: 10px; border: none; cursor: pointer; margin-top: 10px; border-radius: 4px; font-weight: bold; }
+        .empty-state { text-align: center; padding: 50px; color: var(--text-dim); font-size: 1.1rem; border: 2px dashed #333; border-radius: 15px; margin-top: 20px;}
 
-        /* Mesas */
-        .table-row { background: #333; padding: 15px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #4cd137; }
-        .btn-details { background: #00a8ff; color: white; padding: 8px 15px; border: none; cursor: pointer; border-radius: 4px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; }
-        .modal-content { background: white; color: black; padding: 25px; width: 450px; border-radius: 8px; max-height: 80vh; overflow-y: auto; }
-        .bill-item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 8px 0; font-size: 0.95em; }
-        .waiter-tag { font-size: 0.75em; color: #666; font-style: italic; margin-left: 5px; }
-        .bill-total { font-size: 1.6em; text-align: right; margin-top: 20px; font-weight: bold; color: #222; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2 style="color:white; text-align:center;">Gestão</h2>
-        <button onclick="nav('kitchen')" id="btn-kitchen" class="active">👨‍🍳 Cozinha (Pedidos)</button>
-        <button onclick="nav('tables')" id="btn-tables">💰 Mesas (Contas)</button>
-    </div>
+    <nav class="sidebar">
+        <div class="brand">🚀 SysRest</div>
+        <button class="nav-btn active" id="btn-kitchen" onclick="navigate('kitchen')">
+            👨‍🍳 Cozinha
+        </button>
+        <button class="nav-btn" id="btn-tables" onclick="navigate('tables')">
+            💰 Mesas / Caixa
+        </button>
+    </nav>
 
-    <div class="content">
+    <main class="main-content">
+        
         <div id="view-kitchen">
-            <h1>Pedidos na Fila</h1>
-            <div id="kitchen-list" class="orders-container"></div>
+            <div class="header-title">
+                <span>Fila de Pedidos</span>
+                <span style="font-size: 0.9rem; color: var(--primary); font-weight: normal;">Atualização em tempo real</span>
+            </div>
+            <div id="kitchen-container" class="kitchen-grid">
+                </div>
         </div>
 
         <div id="view-tables" class="hidden">
-            <h1>Contas Abertas</h1>
-            <div id="tables-list"></div>
+            <div class="header-title">
+                <span>Gestão de Mesas</span>
+            </div>
+            <div id="tables-container" class="tables-grid">
+                </div>
         </div>
-    </div>
 
-    <div id="modal" class="modal">
+    </main>
+
+    <div id="modal" class="modal-overlay">
         <div class="modal-content">
-            <h2 id="modal-title">Mesa</h2>
-            <div id="modal-items"></div>
-            <div class="bill-total">Total: R$ <span id="modal-total">0.00</span></div>
-            <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <button onclick="closeBill()" style="flex:1; padding:12px; background:#e84118; color:white; border:none; cursor:pointer; border-radius:4px; font-weight:bold;">💸 Fechar Conta</button>
-                <button onclick="closeModal()" style="flex:1; padding:12px; background:#ccc; border:none; cursor:pointer; border-radius:4px;">Voltar</button>
+            <div class="modal-header">
+                <h3 style="margin:0;">Detalhes da Conta</h3>
+                <button class="btn-back" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modal-list">
+                </div>
+            <div class="modal-footer">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:1.2rem; font-weight:bold;">
+                    <span>Total</span>
+                    <span>R$ <span id="modal-total">0.00</span></span>
+                </div>
+                <button class="btn-close-bill" onclick="payBill()">💸 Fechar Conta</button>
             </div>
         </div>
     </div>
 
     <script>
         // --- NAVEGAÇÃO ---
-        function nav(view) {
-            document.querySelectorAll('.content > div').forEach(d => d.classList.add('hidden'));
-            document.getElementById(`view-${view}`).classList.remove('hidden');
-            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-${view}`).classList.add('active');
-            
-            if(view === 'kitchen') loadKitchen();
-            if(view === 'tables') loadTables();
+        function navigate(page) {
+            // Alterna abas
+            document.getElementById('view-kitchen').classList.add('hidden');
+            document.getElementById('view-tables').classList.add('hidden');
+            document.getElementById('btn-kitchen').classList.remove('active');
+            document.getElementById('btn-tables').classList.remove('active');
+
+            document.getElementById(`view-${page}`).classList.remove('hidden');
+            document.getElementById(`btn-${page}`).classList.add('active');
+
+            // Carrega dados
+            if(page === 'kitchen') renderKitchen();
+            if(page === 'tables') renderTables();
         }
 
         // --- COZINHA ---
-        function loadKitchen() {
-            const list = document.getElementById('kitchen-list');
+        function renderKitchen() {
+            const container = document.getElementById('kitchen-container');
             const orders = JSON.parse(localStorage.getItem('restaurantOrders')) || [];
             
-            list.innerHTML = orders.length ? '' : '<p style="color:#777">Nenhum pedido pendente.</p>';
+            container.innerHTML = '';
 
-            orders.forEach((order, idx) => {
-                const itemsList = order.items.map(i => `<li>${i.qty}x ${i.name}</li>`).join('');
-                list.innerHTML += `
-                    <div class="order-card">
-                        <div class="order-meta">
-                            <span>Mesa ${order.table}</span>
-                            <span>${order.time}</span>
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="empty-state">👨‍🍳 A cozinha está tranquila.<br>Nenhum pedido pendente.</div>';
+                return;
+            }
+
+            orders.forEach((order, index) => {
+                let itemsHtml = '';
+                order.items.forEach(i => {
+                    itemsHtml += `<li><span class="item-qty">${i.qty}x</span> ${i.name}</li>`;
+                });
+
+                container.innerHTML += `
+                    <div class="ticket-card">
+                        <div class="ticket-header">
+                            <span class="table-badge">Mesa ${order.table}</span>
+                            <span class="time-badge">${order.time}</span>
                         </div>
-                        <div class="waiter-badge">Garçom: ${order.waiter}</div>
-                        <ul>${itemsList}</ul>
-                        <button class="btn-deliver" onclick="deliverOrder(${idx})">✅ Entregar</button>
-                    </div>`;
+                        <div class="ticket-body">
+                            <div class="waiter-info">👤 Garçom: ${order.waiter}</div>
+                            <ul class="item-list">
+                                ${itemsHtml}
+                            </ul>
+                        </div>
+                        <div class="ticket-footer">
+                            <button class="btn-deliver" onclick="deliverOrder(${index})">✅ Marcar como Pronto</button>
+                        </div>
+                    </div>
+                `;
             });
         }
 
-        function deliverOrder(idx) {
+        function deliverOrder(index) {
             let orders = JSON.parse(localStorage.getItem('restaurantOrders'));
-            let order = orders[idx];
+            let order = orders[index];
 
-            // 1. Prepara os itens para salvar na conta (Adiciona o nome do garçom em CADA item)
-            // Isso permite saber quem pediu o que no histórico final
-            const itemsWithWaiter = order.items.map(item => ({
-                ...item,
-                waiter: order.waiter // Carimba o item com o nome do garçom
-            }));
+            // 1. Marca garçom em cada item
+            const itemsTagged = order.items.map(i => ({ ...i, waiter: order.waiter }));
 
-            // 2. Salva na conta da Mesa
+            // 2. Salva na conta da mesa
             let tabs = JSON.parse(localStorage.getItem('restaurantTabs')) || {};
-            if (!tabs[order.table]) tabs[order.table] = []; // Cria conta se não existir
-            
-            // AQUI ACONTECE A SOMA: O push adiciona novos itens ao array existente da mesa
-            tabs[order.table].push(...itemsWithWaiter); 
+            if(!tabs[order.table]) tabs[order.table] = [];
+            tabs[order.table].push(...itemsTagged);
 
             localStorage.setItem('restaurantTabs', JSON.stringify(tabs));
 
             // 3. Remove da cozinha
-            orders.splice(idx, 1);
+            orders.splice(index, 1);
             localStorage.setItem('restaurantOrders', JSON.stringify(orders));
-            
-            loadKitchen();
+
+            renderKitchen();
         }
 
-        // --- MESAS / CAIXA ---
-        function loadTables() {
-            const list = document.getElementById('tables-list');
+        // --- MESAS ---
+        function renderTables() {
+            const container = document.getElementById('tables-container');
             const tabs = JSON.parse(localStorage.getItem('restaurantTabs')) || {};
-            const tables = Object.keys(tabs).sort((a,b) => a - b); // Ordena mesas
+            const tables = Object.keys(tabs).sort((a,b) => a - b);
 
-            list.innerHTML = tables.length ? '' : '<p>Nenhuma conta aberta.</p>';
+            container.innerHTML = '';
+
+            if (tables.length === 0) {
+                container.innerHTML = '<div class="empty-state">💰 Todas as contas estão fechadas.</div>';
+                return;
+            }
 
             tables.forEach(t => {
                 const total = tabs[t].reduce((acc, i) => acc + (i.price * i.qty), 0);
-                list.innerHTML += `
-                    <div class="table-row">
+                container.innerHTML += `
+                    <div class="table-card">
                         <div>
-                            <h2>Mesa ${t}</h2>
-                            <span style="color:#ccc">${tabs[t].length} itens lançados</span>
+                            <div class="table-status">🟢 Ocupada</div>
+                            <div class="table-number">Mesa ${t}</div>
+                            <div style="color:var(--text-dim); margin-top:5px;">${tabs[t].length} itens pedidos</div>
                         </div>
-                        <div style="text-align:right">
-                            <div style="font-size:1.4em; font-weight:bold; color:#4cd137;">R$ ${total.toFixed(2)}</div>
-                            <button class="btn-details" onclick="openBill('${t}')">Ver Conta</button>
+                        <div>
+                            <div class="table-total">R$ ${total.toFixed(2)}</div>
+                            <button class="btn-view-bill" onclick="openModal('${t}')">Ver Conta</button>
                         </div>
-                    </div>`;
+                    </div>
+                `;
             });
         }
 
-        let currentTable = null;
+        // --- MODAL & PAGAMENTO ---
+        let activeTable = null;
 
-        function openBill(table) {
-            currentTable = table;
+        function openModal(table) {
+            activeTable = table;
             const tabs = JSON.parse(localStorage.getItem('restaurantTabs'));
             const items = tabs[table];
-            const modalList = document.getElementById('modal-items');
+            const list = document.getElementById('modal-list');
             
+            list.innerHTML = '';
             let total = 0;
-            modalList.innerHTML = '';
 
-            // Lista item por item (não agrupamos para mostrar o garçom de cada pedido específico)
             items.forEach(i => {
                 total += i.price * i.qty;
-                modalList.innerHTML += `
-                    <div class="bill-item">
+                list.innerHTML += `
+                    <div class="receipt-item">
                         <div>
-                            <strong>${i.qty}x ${i.name}</strong>
-                            <span class="waiter-tag">(Garçom: ${i.waiter})</span>
+                            <div style="font-weight:600; color:#fff;">${i.qty}x ${i.name}</div>
+                            <span class="receipt-meta">Ped por: ${i.waiter || 'Sistema'}</span>
                         </div>
-                        <div>R$ ${(i.price * i.qty).toFixed(2)}</div>
-                    </div>`;
+                        <div style="font-weight:bold;">R$ ${(i.price * i.qty).toFixed(2)}</div>
+                    </div>
+                `;
             });
 
-            document.getElementById('modal-title').innerText = `Conta Mesa ${table}`;
             document.getElementById('modal-total').innerText = total.toFixed(2);
             document.getElementById('modal').style.display = 'flex';
-        }
-
-        function closeBill() {
-            if(confirm(`Confirmar pagamento da Mesa ${currentTable}?`)) {
-                let tabs = JSON.parse(localStorage.getItem('restaurantTabs'));
-                delete tabs[currentTable]; // Apaga a conta
-                localStorage.setItem('restaurantTabs', JSON.stringify(tabs));
-                closeModal();
-                loadTables();
-            }
         }
 
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
         }
 
-        // Atualização automática da cozinha
-        setInterval(() => {
-            if(!document.getElementById('view-kitchen').classList.contains('hidden')) loadKitchen();
-        }, 4000);
+        function payBill() {
+            if(confirm(`Confirmar pagamento e fechar Mesa ${activeTable}?`)) {
+                let tabs = JSON.parse(localStorage.getItem('restaurantTabs'));
+                delete tabs[activeTable];
+                localStorage.setItem('restaurantTabs', JSON.stringify(tabs));
+                
+                closeModal();
+                renderTables();
+            }
+        }
 
-        loadKitchen();
+        // Atualização automática da cozinha (5 segundos)
+        setInterval(() => {
+            if(!document.getElementById('view-kitchen').classList.contains('hidden')) {
+                renderKitchen();
+            }
+        }, 5000);
+
+        // Inicializar
+        renderKitchen();
     </script>
 </body>
 </html>
